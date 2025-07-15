@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - ZOOMSTREET CULTURE</title>
+    <meta name="description" content="Découvrez l'histoire de Zoomstreet Culture, maison créative béninoise dirigée par Chabanel ZOUMENOU et Mr SALIFOU Kabir.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    
+    <!-- Google Fonts - JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'zs-orange': '#f75f07',
+                        'zs-black': '#000000',
+                        'zs-white': '#ffffff'
+                    },
+                    fontFamily: {
+                        'jetbrains': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'JetBrains Mono', monospace; }
+        .hero-gradient { background: linear-gradient(135deg, #f75f07 0%, #ff8c42 100%); }
+        .text-gradient { background: linear-gradient(45deg, #f75f07, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(247, 95, 7, 0.2); }
+        
+        /* Styles pour la galerie */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(247, 95, 7, 0.3);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(247, 95, 7, 0.8), rgba(0, 0, 0, 0.6));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-overlay h3 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            transform: translateY(20px);
+            transition: transform 0.4s ease 0.1s;
+        }
+        
+        .gallery-overlay p {
+            color: white;
+            font-size: 1rem;
+            transform: translateY(20px);
+            transition: transform 0.4s ease 0.2s;
+        }
+        
+        .gallery-item:hover .gallery-overlay h3,
+        .gallery-item:hover .gallery-overlay p {
+            transform: translateY(0);
+        }
+        
+        /* Styles pour la galerie en modal */
+        .gallery-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .gallery-modal.active {
+            display: flex;
+        }
+        
+        .gallery-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .gallery-modal img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        
+        .gallery-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: color 0.3s ease;
+        }
+        
+        .gallery-close:hover {
+            color: #f75f07;
+        }
+        
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(247, 95, 7, 0.8);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .gallery-nav:hover {
+            background: #f75f07;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .gallery-nav-prev {
+            left: 2rem;
+        }
+        
+        .gallery-nav-next {
+            right: 2rem;
+        }
+        
+        .gallery-info {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .gallery-counter {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(247, 95, 7, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="font-jetbrains bg-zs-white">
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 bg-zs-black transition-all duration-300 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="text-2xl font-bold text-zs-orange">
+                ZOOMSTREET
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-white hover:text-zs-orange transition-colors font-medium">Accueil</a>
+                <a href="about.html" class="text-zs-orange font-medium">À propos</a>
+                <a href="blog.html" class="text-white hover:text-zs-orange transition-colors font-medium">Blog</a>
+                <a href="boutique.html" class="text-white hover:text-zs-orange transition-colors font-medium">Boutique</a>
+                <a href="contact.html" class="text-white hover:text-zs-orange transition-colors font-medium">Contact</a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-zs-black">
+            <div class="px-6 py-4 space-y-4">
+                <a href="index.html" class="block text-white hover:text-zs-orange transition-colors">Accueil</a>
+                <a href="about.html" class="block text-zs-orange">À propos</a>
+                <a href="blog.html" class="block text-white hover:text-zs-orange transition-colors">Blog</a>
+                <a href="boutique.html" class="block text-white hover:text-zs-orange transition-colors">Boutique</a>
+                <a href="contact.html" class="block text-white hover:text-zs-orange transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-96 flex items-center relative">
+        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
+                À PROPOS DE <span class="text-zs-black">NOUS</span>
+            </h1>
+            <p class="text-xl text-white max-w-2xl mx-auto">
+                Découvrez l'histoire et la vision de Zoomstreet Culture
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-zs-black mb-8">
+                        NOTRE <span class="text-gradient">IDENTITE</span>
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed" style="text-align: justify;">Zoomstreet Culture est une maison créative béninoise fondée par Chabanel ZOUMENOU pour valoriser le cinéma africain, la mode streetwear, les arts du spectacle et le patrimoine culturel. Portée par une vision claire, elle fait de la culture un levier d’expression, de transformation et de visibilité pour la jeunesse africaine. Zoomstreet Culture révèle des talents, raconte des histoires et célèbre l’identité du continent. Plus qu’un collectif, c’est un mouvement qui inspire et rassemble.</p>
+                    <p class="text-xl text-gray-600 leading-relaxed" style="text-align: justify;">
+                        Faire de la culture un levier de transformation, d'influence et de visibilité pour la jeunesse africaine. 
+                        Nous croyons en la puissance créative de l'Afrique et nous nous engageons à la porter vers de nouveaux horizons.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="card-hover bg-zs-orange p-8 rounded-lg text-white">
+                        <h3 class="text-2xl font-bold mb-4">🎯 VISION</h3>
+                        <p class="text-lg">
+                            Devenir la référence panafricaine en matière de création culturelle, 
+                            en alliant tradition et modernité pour construire l'avenir artistique du continent.
+                        </p>
+                    </div>
+                    
+                    <div class="card-hover bg-zs-black p-8 rounded-lg text-white">
+                        <h3 class="text-2xl font-bold mb-4 text-zs-orange">⚡ VALEURS</h3>
+                        <ul class="text-lg space-y-2">
+                            <li>• Authenticité culturelle</li>
+                            <li>• Innovation créative</li>
+                            <li>• Excellence artistique</li>
+                            <li>• Impact social</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-zs-black mb-16">
+                NOTRE <span class="text-gradient">ÉQUIPE</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                <!-- Director Artistico -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg text-center">
+                    <img src="./icones/homme-daffaire.png" alt="Chabanel ZOUMENOU" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-bold text-zs-black mb-2">Chabanel ZOUMENOU</h3>
+                    <p class="text-zs-orange font-bold mb-4">Directeur Artistique</p>
+                    <p class="text-gray-600 mb-6">
+                        Visionnaire créatif passionné par l'art africain contemporain et la valorisation culturelle.
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-zs-orange hover:text-zs-black">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-zs-orange hover:text-zs-black">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Director General -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg text-center">
+                    <img src="./icones/homme-daffaire.png" alt="Mr SALIFOU Kabir" class="w-32 h-32 rounded-full mx-auto mb-6 object-cover">
+                    <h3 class="text-2xl font-bold text-zs-black mb-2">Mr SALIFOU Kabir</h3>
+                    <p class="text-zs-orange font-bold mb-4">Directeur Général</p>
+                    <p class="text-gray-600 mb-6">
+                        Leader stratégique expérimenté dans le développement commercial et la gestion d'entreprise culturelle.
+                    </p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-zs-orange hover:text-zs-black">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-zs-orange hover:text-zs-black">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-20 bg-zs-black">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-4">
+                NOTRE <span class="text-zs-orange">GALERIE</span>
+            </h2>
+            <p class="text-center text-gray-300 mb-16 max-w-2xl mx-auto">
+                Découvrez les moments forts de notre parcours créatif et culturel à travers ces instantanés qui racontent notre histoire.
+            </p>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item" data-index="0">
+                    <img src="./images/galerie.jpg" alt="Atelier création textile">
+                    <div class="gallery-overlay">
+                        <h3>Atelier Création Textile</h3>
+                        <p>Workshop avec des artisans locaux sur les techniques traditionnelles de tissage</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-index="1">
+                    <img src="./images/galerie.jpg" alt="Défilé mode afro-urbain">
+                    <div class="gallery-overlay">
+                        <h3>Défilé Mode Afro-Urbain</h3>
+                        <p>Présentation de notre collection streetwear inspirée de la culture béninoise</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-index="2">
+                    <img src="./images/galerie.jpg" alt="Festival culturel">
+                    <div class="gallery-overlay">
+                        <h3>Festival Culturel 2023</h3>
+                        <p>Grand rassemblement célébrant la diversité artistique africaine</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-index="3">
+                    <img src="./images/galerie.jpg" alt="Projection cinéma">
+                    <div class="gallery-overlay">
+                        <h3>Nuit du Cinéma Africain</h3>
+                        <p>Projection de films d'auteurs africains émergents</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-index="4">
+                    <img src="./images/galerie.jpg" alt="Spectacle arts vivants">
+                    <div class="gallery-overlay">
+                        <h3>Spectacle Arts Vivants</h3>
+                        <p>Performance mêlant danse traditionnelle et expression contemporaine</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item" data-index="5">
+                    <img src="./images/galerie.jpg" alt="Exposition artistique">
+                    <div class="gallery-overlay">
+                        <h3>Exposition "Racines Modernes"</h3>
+                        <p>Œuvres d'artistes béninois explorant l'identité africaine contemporaine</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal pour la galerie -->
+    <div id="gallery-modal" class="gallery-modal">
+        <span class="gallery-close">&times;</span>
+        <div class="gallery-counter">
+            <span id="current-image">1</span> / <span id="total-images">6</span>
+        </div>
+        <button class="gallery-nav gallery-nav-prev" id="gallery-prev">‹</button>
+        <div class="gallery-modal-content">
+            <img id="modal-image" src="" alt="Image en grand">
+        </div>
+        <button class="gallery-nav gallery-nav-next" id="gallery-next">›</button>
+        <div class="gallery-info">
+            <h3 id="modal-title"></h3>
+            <p id="modal-description"></p>
+        </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <section class="py-20 bg-zs-black">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-16">
+                ÉVÉNEMENTS À <span class="text-zs-orange">VENIR</span>
+            </h2>
+            
+            <div class="max-w-2xl mx-auto space-y-6">
+                <div class="bg-gray-800 p-6 rounded-lg flex items-center">
+                    <div class="text-zs-orange font-bold text-2xl mr-6">15<br>JAN</div>
+                    <div>
+                        <h3 class="text-white font-bold mb-2">Workshop Création Textile</h3>
+                        <p class="text-gray-300">Atelier de création avec des artisans locaux</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 p-6 rounded-lg flex items-center">
+                    <div class="text-zs-orange font-bold text-2xl mr-6">28<br>FEV</div>
+                    <div>
+                        <h3 class="text-white font-bold mb-2">Soirée Talents Émergents</h3>
+                        <p class="text-gray-300">Showcase de nouveaux artistes africains</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800 p-6 rounded-lg flex items-center">
+                    <div class="text-zs-orange font-bold text-2xl mr-6">12<br>MAR</div>
+                    <div>
+                        <h3 class="text-white font-bold mb-2">Exposition "Afrique 2030"</h3>
+                        <p class="text-gray-300">Vision artistique du futur du continent</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-zs-black mb-16">
+                NOS <span class="text-gradient">PARTENAIRES</span>
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-gray-500 font-bold">LOGO</span>
+                    </div>
+                    <p class="text-gray-600">Partenaire 1</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-gray-500 font-bold">LOGO</span>
+                    </div>
+                    <p class="text-gray-600">Partenaire 2</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-gray-500 font-bold">LOGO</span>
+                    </div>
+                    <p class="text-gray-600">Partenaire 3</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-gray-500 font-bold">LOGO</span>
+                    </div>
+                    <p class="text-gray-600">Partenaire 4</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 hero-gradient">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-white mb-8">
+                SUIVEZ NOTRE ACTUALITÉ
+            </h2>
+            <p class="text-xl text-zs-black mb-8">
+                Découvrez nos derniers articles et projets créatifs
+            </p>
+            <a href="blog.html" class="bg-zs-black text-white px-12 py-4 font-bold hover:bg-gray-800 transition-colors inline-block">
+                LIRE LE BLOG
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-zs-black text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-zs-orange mb-4">ZOOMSTREET</h3>
+                    <p class="text-gray-300 mb-4">RCCM: </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">liens rapide</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-zs-orange">Accueil</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-zs-orange">À propos</a></li>
+                        <li><a href="blog.html" class="text-gray-300 hover:text-zs-orange">Blog</a></li>
+                        <li><a href="boutique.html" class="text-gray-300 hover:text-zs-orange">Boutique</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt"></i> Cotonou, Rue 5, Villa 12</p>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-envelope"></i> contact@zoomstreet.africa</p>
+                    <p class="text-gray-300"><i class="fas fa-phone"></i> +229 00 00 00 00</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Newsletter</h4>
+                    <form class="space-y-2">
+                        <input type="email" placeholder="Votre email" class="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded text-white">
+                        <button type="submit" class="w-full bg-zs-orange text-white px-4 py-2 font-bold hover:bg-orange-600 transition-colors">
+                            S'ABONNER
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-300" id="copyright"></p>
+            </div>
+
+<script>
+  const year = new Date().getFullYear();
+  document.getElementById('copyright').textContent = `© ${year} Zoomstreet Culture. Tous droits réservés.`;
+</script>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Gallery modal functionality
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const galleryModal = document.getElementById('gallery-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+        const galleryClose = document.querySelector('.gallery-close');
+        const galleryPrev = document.getElementById('gallery-prev');
+        const galleryNext = document.getElementById('gallery-next');
+        const currentImageSpan = document.getElementById('current-image');
+        const totalImagesSpan = document.getElementById('total-images');
+
+        let currentImageIndex = 0;
+        
+        // Gallery data
+        const galleryData = [
+            {
+                src: './images/galerie.jpg',
+                alt: 'Atelier création textile',
+                title: 'Atelier Création Textile',
+                description: 'Workshop avec des artisans locaux sur les techniques traditionnelles de tissage'
+            },
+            {
+                src: './images/galerie.jpg',
+                alt: 'Défilé mode afro-urbain',
+                title: 'Défilé Mode Afro-Urbain',
+                description: 'Présentation de notre collection streetwear inspirée de la culture béninoise'
+            },
+            {
+                src: './images/galerie.jpg',
+                alt: 'Festival culturel',
+                title: 'Festival Culturel 2023',
+                description: 'Grand rassemblement célébrant la diversité artistique africaine'
+            },
+            {
+                src: './images/galerie.jpg',
+                alt: 'Projection cinéma',
+                title: 'Nuit du Cinéma Africain',
+                description: 'Projection de films d\'auteurs africains émergents'
+            },
+            {
+                src: './images/galerie.jpg',
+                alt: 'Spectacle arts vivants',
+                title: 'Spectacle Arts Vivants',
+                description: 'Performance mêlant danse traditionnelle et expression contemporaine'
+            },
+            {
+                src: './images/galerie.jpg',
+                alt: 'Exposition artistique',
+                title: 'Exposition "Racines Modernes"',
+                description: 'Œuvres d\'artistes béninois explorant l\'identité africaine contemporaine'
+            }
+        ];
+
+        totalImagesSpan.textContent = galleryData.length;
+
+        function updateModal(index) {
+            const data = galleryData[index];
+            modalImage.src = data.src;
+            modalImage.alt = data.alt;
+            modalTitle.textContent = data.title;
+            modalDescription.textContent = data.description;
+            currentImageSpan.textContent = index + 1;
+            currentImageIndex = index;
+        }
+
+        function showModal(index) {
+            updateModal(index);
+            galleryModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            galleryModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showPrevImage() {
+            const prevIndex = currentImageIndex > 0 ? currentImageIndex - 1 : galleryData.length - 1;
+            updateModal(prevIndex);
+        }
+
+        function showNextImage() {
+            const nextIndex = currentImageIndex < galleryData.length - 1 ? currentImageIndex + 1 : 0;
+            updateModal(nextIndex);
+        }
+
+        // Event listeners
+        galleryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                showModal(index);
+            });
+        });
+
+        galleryClose.addEventListener('click', closeModal);
+        galleryPrev.addEventListener('click', showPrevImage);
+        galleryNext.addEventListener('click', showNextImage);
+
+        galleryModal.addEventListener('click', function(e) {
+            if (e.target === galleryModal) {
+                closeModal();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (galleryModal.classList.contains('active')) {
+                switch(e.key) {
+                    case 'Escape':
+                        closeModal();
+                        break;
+                    case 'ArrowLeft':
+                        showPrevImage();
+                        break;
+                    case 'ArrowRight':
+                        showNextImage();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

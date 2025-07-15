@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOOMSTREET CULTURE - Créer. Exprimer. Élever l'Afrique</title>
+    <meta name="description" content="Zoomstreet Culture - Maison créative et culturelle béninoise. Cinéma africain, streetwear, arts vivants et patrimoine culturel.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Gsap -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Google Fonts - JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'zs-orange': '#f75f07',
+                        'zs-black': '#000000',
+                        'zs-white': '#ffffff'
+                    },
+                    fontFamily: {
+                        'jetbrains': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'JetBrains Mono', monospace; }
+        .hero-gradient { background: linear-gradient(135deg, #f75f07 0%, #ff8c42 100%); }
+        .text-gradient { background: linear-gradient(45deg, #f75f07, #ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(247, 95, 7, 0.3); }
+        
+        /* Styles pour le carrousel hero */
+        .fade-up {
+    opacity: 0;
+    transform: translateY(50px);
+}
+
+.fade-left {
+    opacity: 0;
+    transform: translateX(-50px);
+}
+
+.fade-right {
+    opacity: 0;
+    transform: translateX(50px);
+}
+
+.fade-in {
+    opacity: 0;
+}
+
+.scale-up {
+    opacity: 0;
+    transform: scale(0.8);
+}
+        
+        
+   .hero-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 300px;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.carousel-image {
+    border-radius: 12px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    opacity: 0;
+    transform: scale(0.7) translateY(50px);
+    cursor: pointer;
+}
+
+.carousel-image.active {
+    box-shadow: 0 20px 40px rgba(247, 95, 7, 0.4);
+}
+
+/* États après animation */
+.carousel-image.loaded {
+    opacity: 0.6;
+    transform: scale(0.8) translateY(0);
+}
+
+.carousel-image.active.loaded {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+@media (min-width: 768px) {
+    .hero-carousel {
+        gap: 1rem;
+        height: 400px;
+    }
+}
+
+.carousel-image {
+    border-radius: 12px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+    opacity: 0.6;
+    transform: scale(0.8);
+    cursor: pointer;
+}
+
+.carousel-image.active {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 20px 40px rgba(247, 95, 7, 0.4);
+}
+
+.carousel-side {
+    width: 60px;
+    height: 200px;
+}
+
+.carousel-main {
+    width: 180px;
+    height: 200px;
+}
+
+@media (min-width: 768px) {
+    .carousel-side {
+        width: 80px;
+        height: 300px;
+    }
+    
+    .carousel-main {
+        width: 250px;
+        height: 300px;
+    }
+}
+    </style>
+</head>
+<body class="font-jetbrains bg-zs-white">
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="text-2xl font-bold text-zs-white">
+                ZOOMSTREET
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-white hover:text-zs-orange transition-colors font-medium">Accueil</a>
+                <a href="about.html" class="text-white hover:text-zs-orange transition-colors font-medium">À propos</a>
+                <a href="blog.html" class="text-white hover:text-zs-orange transition-colors font-medium">Blog</a>
+                <a href="boutique.html" class="text-white hover:text-zs-orange transition-colors font-medium">Boutique</a>
+                <a href="contact.html" class="text-white hover:text-zs-orange transition-colors font-medium">Contact</a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-zs-black">
+            <div class="px-6 py-4 space-y-4">
+                <a href="index.html" class="block text-white hover:text-zs-orange transition-colors">Accueil</a>
+                <a href="about.html" class="block text-white hover:text-zs-orange transition-colors">À propos</a>
+                <a href="blog.html" class="block text-white hover:text-zs-orange transition-colors">Blog</a>
+                <a href="boutique.html" class="block text-white hover:text-zs-orange transition-colors">Boutique</a>
+                <a href="contact.html" class="block text-white hover:text-zs-orange transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+   <section class="hero-gradient min-h-screen flex items-center pt-20 md:pt-0">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col lg:flex-row items-center">
+            <!-- Left Content -->
+            <div class="lg:w-1/2 mb-8 lg:mb-0 mt-8 md:mt-0">
+                <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 fade-left">
+    ZOOMSTREET<br>
+    <span class="text-zs-black">CULTURE</span>
+</h1>
+                <p class="text-lg md:text-xl lg:text-2xl text-zs-black font-medium mb-8 fade-left" data-delay="0.2">
+    Créer. Exprimer. Élever l'Afrique.
+</p>
+
+                <div class="flex flex-col sm:flex-row gap-4 fade-left" data-delay="0.4">
+    <button class="bg-zs-black text-white px-8 py-4 font-bold hover:bg-gray-800 transition-colors">
+        DÉCOUVRIR
+    </button>
+    <button class="border-2 border-zs-black text-zs-black px-8 py-4 font-bold hover:bg-zs-black hover:text-white transition-colors">
+        NOS PROJETS
+    </button>
+</div>
+            </div>
+            
+            <!-- Right Carousel -->
+            <div class="lg:w-1/2 mt-8 lg:mt-0">
+                <div class="hero-carousel">
+                    <!-- Image de gauche -->
+                    <img src="/images/hero-3.jpg" alt="Culture africaine" class="carousel-image carousel-side" data-index="2">
+                    
+                    <!-- Image principale active -->
+                    <img src="/images/hero-1.png" alt="Culture africaine" class="carousel-image carousel-main active" data-index="0">
+                    
+                    <!-- Image de droite -->
+                    <img src="/images/hero-2.jpg" alt="Culture africaine" class="carousel-image carousel-side" data-index="1">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Activities Cards -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-zs-black mb-16 fade-up">
+            NOS <span class="text-gradient">ACTIVITÉS</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cinema -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg fade-up">
+                    
+                    <div class="text-4xl mb-4 " style="font-size: 70px;">
+                       <img src="./icones/bobine-de-film.png" alt="" width="70px">
+                    </div>
+                    <h3 class="text-xl font-bold text-zs-black mb-4">Cinéma & Narration</h3>
+                    <p class="text-gray-600 mb-6">Valorisation du cinéma africain contemporain et production de contenus visuels authentiques.</p>
+                    <button class="text-zs-orange font-bold hover:underline">En savoir plus →</button>
+                </div>
+                
+                <!-- Streetwear -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg fade-up">
+                    <div class="text-4xl mb-4">
+                        <img src="./icones/vetements.png" alt="" width="70px">
+                    </div>
+                    <h3 class="text-xl font-bold text-zs-black mb-4">Streetwear Urbain</h3>
+                    <p class="text-gray-600 mb-6">Promotion de la mode streetwear africaine avec une identité culturelle forte.</p>
+                    <button class="text-zs-orange font-bold hover:underline">En savoir plus →</button>
+                </div>
+                
+                <!-- Arts Vivants -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg fade-up">
+                    <div class="text-4xl mb-4">
+                        <img src="./icones/cinema.png" alt="" width="70px">
+                    </div>
+                    <h3 class="text-xl font-bold text-zs-black mb-4">Arts Vivants</h3>
+                    <p class="text-gray-600 mb-6">Production de spectacles, événements culturels et performances artistiques.</p>
+                    <button class="text-zs-orange font-bold hover:underline">En savoir plus →</button>
+                </div>
+                
+                <!-- Patrimoine -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg fade-up">
+                    <div class="text-4xl mb-4">
+                         <img src="./icones/loger.png" alt="" width="70px">
+                    </div>
+                    <h3 class="text-xl font-bold text-zs-black mb-4">Patrimoine Culturel</h3>
+                    <p class="text-gray-600 mb-6">Préservation et transmission du riche patrimoine culturel africain.</p>
+                    <button class="text-zs-orange font-bold hover:underline">En savoir plus →</button>
+                </div>
+                
+                <!-- Import -->
+                <div class="card-hover bg-white p-8 rounded-lg shadow-lg fade-up">
+                    <div class="text-4xl mb-4">
+                        <img src="./icones/icone-de-retour-de-vente.png" alt="" width="70px">
+                    </div>
+                    <h3 class="text-xl font-bold text-zs-black mb-4">Import Produits</h3>
+                    <p class="text-gray-600 mb-6">Importation de produits divers depuis la Chine pour le marché africain.</p>
+                    <button class="text-zs-orange font-bold hover:underline">En savoir plus →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="py-20 bg-zs-black">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-white mb-16 fade-up">
+             POURQUOI NOUS <span class="text-zs-orange">CHOISIR</span> ?
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center scale-up">
+                    <div class="w-16 h-16 bg-zs-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-xl font-bold"><i class="fas fa-palette"></i></span>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">Créativité Enracinée</h3>
+                    <p class="text-gray-300">Authenticité africaine dans chaque création</p>
+                </div>
+                
+                <div class="text-center scale-up">
+                    <div class="w-16 h-16 bg-zs-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-xl font-bold"><i class="fas fa-rocket"></i></span>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">Jeunesse & Inclusion</h3>
+                    <p class="text-gray-300">Plateforme d'expression pour la nouvelle génération</p>
+                </div>
+                
+                <div class="text-center scale-up">
+                    <div class="w-16 h-16 bg-zs-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-xl font-bold"><i class="fas fa-bolt"></i></span>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">Logistique & Art</h3>
+                    <p class="text-gray-300">Alliance unique entre commerce et expression artistique</p>
+                </div>
+                
+                <div class="text-center scale-up">
+                    <div class="w-16 h-16 bg-zs-orange rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white text-xl font-bold"><i class="fas fa-globe-europe"></i></span>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">Vision Afrique</h3>
+                    <p class="text-gray-300">Rayonnement continental et international</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+           <h2 class="text-4xl font-bold text-center text-zs-black mb-16 fade-up">
+             ILS NOUS FONT <span class="text-gradient">CONFIANCE</span>
+            </h2>
+            
+           <div id="testimonials-carousel" class="max-w-4xl mx-auto fade-up">
+                <div class="testimonial-slide bg-white p-8 rounded-lg shadow-lg text-center">
+                    <p class="text-lg text-gray-600 mb-6 italic">
+                        "Zoomstreet Culture a transformé notre vision de la mode africaine. Leur approche créative est exceptionnelle."
+                    </p>
+                    <div class="flex items-center justify-center">
+                        <img src="./icones/homme-daffaire.png" alt="Client" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold text-zs-black">Aminata KONE</h4>
+                            <p class="text-gray-500">Styliste, Abidjan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 hero-gradient">
+        <div class="container mx-auto px-6 text-center fade-up">
+            <h2 class="text-4xl font-bold text-white mb-8">
+            PRÊT À DÉCOUVRIR NOTRE UNIVERS ?
+            </h2>
+            <p class="text-xl text-zs-black mb-8">
+            Explorez notre collection exclusive de produits culturels africains
+            </p>
+            <a href="boutique.html" class="bg-zs-black text-white px-12 py-4 font-bold hover:bg-gray-800 transition-colors inline-block">
+            EXPLORER LA BOUTIQUE
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-zs-black text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-zs-orange mb-4">ZOOMSTREET</h3>
+                    <p class="text-gray-300 mb-4">RCCM: </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">liens rapide</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-zs-orange">Accueil</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-zs-orange">À propos</a></li>
+                        <li><a href="blog.html" class="text-gray-300 hover:text-zs-orange">Blog</a></li>
+                        <li><a href="boutique.html" class="text-gray-300 hover:text-zs-orange">Boutique</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt"></i> Cotonou, Rue 5, Villa 12</p>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-envelope"></i> contact@zoomstreet.africa</p>
+                    <p class="text-gray-300"><i class="fas fa-phone"></i> +229 00 00 00 00</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Newsletter</h4>
+                    <form class="space-y-2">
+                        <input type="email" placeholder="Votre email" class="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded text-white">
+                        <button type="submit" class="w-full bg-zs-orange text-white px-4 py-2 font-bold hover:bg-orange-600 transition-colors">
+                            S'ABONNER
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-300" id="copyright"></p>
+            </div>
+
+<script>
+  const year = new Date().getFullYear();
+  document.getElementById('copyright').textContent = `© ${year} Zoomstreet Culture. Tous droits réservés.`;
+</script>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-zs-black');
+                navbar.classList.remove('bg-transparent');
+            } else {
+                navbar.classList.remove('bg-zs-black');
+                navbar.classList.add('bg-transparent');
+            }
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Hero Carousel functionality
+        const heroImages = [
+            '/images/hero-3.jpg',
+            '/images/hero-1.png',
+            '/images/hero-4.jpg',
+            '/images/hero-2.png', 
+            '/images/hero-5.jpg', 
+        ];
+        
+        let currentHeroIndex = 0;
+        const carouselImages = document.querySelectorAll('.carousel-image');
+        
+        function updateHeroCarousel() {
+            carouselImages.forEach((img, index) => {
+                img.classList.remove('active');
+                
+                // Calculer l'index relatif pour chaque position
+                let imageIndex;
+                if (index === 0) { // Image de gauche
+                    imageIndex = (currentHeroIndex - 1 + heroImages.length) % heroImages.length;
+                } else if (index === 1) { // Image principale (centre)
+                    imageIndex = currentHeroIndex;
+                } else { // Image de droite
+                    imageIndex = (currentHeroIndex + 1) % heroImages.length;
+                }
+                
+                img.src = heroImages[imageIndex];
+                img.setAttribute('data-index', imageIndex);
+                
+                // Marquer l'image centrale comme active
+                if (index === 1) {
+                    img.classList.add('active');
+                }
+            });
+        }
+        
+        // Auto-advance carousel every 5 seconds
+        setInterval(() => {
+            currentHeroIndex = (currentHeroIndex + 1) % heroImages.length;
+            updateHeroCarousel();
+        }, 5000);
+        
+        // Initialize carousel
+        updateHeroCarousel();
+
+        // Simple testimonials rotation
+        const testimonials = [
+            {
+                text: "Zoomstreet Culture a transformé notre vision de la mode africaine. Leur approche créative est exceptionnelle.",
+                name: "Aminata KONE",
+                role: "Styliste, Abidjan",
+                image: "./icones/homme-daffaire.png"
+            },
+            {
+                text: "Une équipe passionnée qui donne vie à la culture africaine contemporaine avec un professionnalisme remarquable.",
+                name: "Koffi MENSAH",
+                role: "Producteur, Lomé",
+                image: "./icones/homme-daffaire.png"
+            }
+        ];
+
+        let currentTestimonial = 0;
+        function rotateTestimonials() {
+            const slide = document.querySelector('.testimonial-slide');
+            const testimonial = testimonials[currentTestimonial];
+            
+            slide.innerHTML = `
+                <p class="text-lg text-gray-600 mb-6 italic">"${testimonial.text}"</p>
+                <div class="flex items-center justify-center">
+                    <img src="${testimonial.image}" alt="Client" class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="font-bold text-zs-black">${testimonial.name}</h4>
+                        <p class="text-gray-500">${testimonial.role}</p>
+                    </div>
+                </div>
+            `;
+            
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+        }
+
+        setInterval(rotateTestimonials, 5000);
+    </script>
+
+    <script>
+// Animation du carousel hero au chargement
+function animateHeroCarousel() {
+    const heroCarousel = document.querySelector('.hero-carousel');
+    const carouselImages = document.querySelectorAll('.carousel-image');
+    
+    // Timeline pour l'animation du carousel
+    const tl = gsap.timeline();
+    
+    // Animer le container du carousel
+    tl.to(heroCarousel, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out"
+    })
+    
+    // Animer les images une par une
+    .to(carouselImages, {
+        opacity: 0.6,
+        y: 0,
+        scale: 0.8,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "back.out(1.7)",
+        onComplete: function() {
+            carouselImages.forEach(img => img.classList.add('loaded'));
+        }
+    })
+    
+    // Animer l'image active
+    .to('.carousel-image.active', {
+        opacity: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: "power2.out"
+    }, "-=0.2");
+}
+
+// Lancer l'animation au chargement de la page
+window.addEventListener('load', function() {
+    // Attendre un peu pour s'assurer que tout est chargé
+    setTimeout(() => {
+        animateHeroCarousel();
+    }, 300);
+});
+
+// Modifier la fonction updateHeroCarousel existante pour inclure l'animation
+function updateHeroCarousel() {
+    carouselImages.forEach((img, index) => {
+        // Réinitialiser les classes
+        img.classList.remove('active', 'loaded');
+        
+        // Calculer l'index relatif pour chaque position
+        let imageIndex;
+        if (index === 0) { // Image de gauche
+            imageIndex = (currentHeroIndex - 1 + heroImages.length) % heroImages.length;
+        } else if (index === 1) { // Image principale (centre)
+            imageIndex = currentHeroIndex;
+        } else { // Image de droite
+            imageIndex = (currentHeroIndex + 1) % heroImages.length;
+        }
+        
+        img.src = heroImages[imageIndex];
+        img.setAttribute('data-index', imageIndex);
+        
+        // Marquer l'image centrale comme active
+        if (index === 1) {
+            img.classList.add('active');
+        }
+        
+        // Ajouter la classe loaded si le carousel a déjà été animé
+        if (document.querySelector('.hero-carousel').style.opacity === '1') {
+            img.classList.add('loaded');
+        }
+    });
+    
+    // Animer le changement d'image active
+    gsap.to('.carousel-image.active', {
+        scale: 1,
+        opacity: 1,
+        duration: 0.3,
+        ease: "power2.out"
+    });
+}
+
+// Animation lors du hover sur les images
+document.querySelectorAll('.carousel-image').forEach(img => {
+    img.addEventListener('mouseenter', function() {
+        if (this.classList.contains('loaded')) {
+            gsap.to(this, {
+                scale: this.classList.contains('active') ? 1.05 : 0.85,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        }
+    });
+    
+    img.addEventListener('mouseleave', function() {
+        if (this.classList.contains('loaded')) {
+            gsap.to(this, {
+                scale: this.classList.contains('active') ? 1 : 0.8,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+        }
+    });
+});
+</script>
+    <script>
+// Initialiser GSAP ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
+
+// Animation pour les éléments fade-up
+gsap.utils.toArray('.fade-up').forEach((element, index) => {
+    const delay = element.dataset.delay || 0;
+    
+    gsap.fromTo(element, 
+        {
+            opacity: 0,
+            y: 50
+        }, 
+        {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: delay,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: element,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            }
+        }
+    );
+});
+
+// Animation pour les éléments scale-up
+gsap.utils.toArray('.scale-up').forEach((element, index) => {
+    const delay = element.dataset.delay || 0;
+    
+    gsap.fromTo(element, 
+        {
+            opacity: 0,
+            scale: 0.8
+        }, 
+        {
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            delay: delay,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+                trigger: element,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            }
+        }
+    );
+});
+
+// Animation pour les éléments fade-left
+gsap.utils.toArray('.fade-left').forEach((element, index) => {
+    gsap.fromTo(element, 
+        {
+            opacity: 0,
+            x: -50
+        }, 
+        {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: element,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            }
+        }
+    );
+});
+
+// Animation pour les éléments fade-right
+gsap.utils.toArray('.fade-right').forEach((element, index) => {
+    gsap.fromTo(element, 
+        {
+            opacity: 0,
+            x: 50
+        }, 
+        {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: element,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            }
+        }
+    );
+});
+
+// Animation pour les éléments fade-in
+gsap.utils.toArray('.fade-in').forEach((element, index) => {
+    gsap.fromTo(element, 
+        {
+            opacity: 0
+        }, 
+        {
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: element,
+                start: "top 80%",
+                end: "bottom 20%",
+                toggleActions: "play none none reverse"
+            }
+        }
+    );
+});
+</script>
+</body>
+</html>
